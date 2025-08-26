@@ -1,0 +1,19 @@
+openapi: 3.1.0
+info:
+  title: Home API
+  description: Home API
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8000'
+paths:
+  /home:
+    get:
+      summary: "Renvoie une page html de bienvenue"
+      responses:
+        200:
+          description: "Page de bienvenue affiché avec succès"
+          content:
+            text/plain:
+              schema:
+                type: String
+                example: <html><body><h1>Welcome home!</h1></body></html>
