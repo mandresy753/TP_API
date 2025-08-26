@@ -1,0 +1,21 @@
+openapi: 3.1.0
+info:
+  title: My post API
+  description: My post API
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8000'
+paths:
+  /ping:
+    get:
+      summary: "Retourner Pong"
+      responses:
+        200:
+          description: "Pong retourné avec succès"
+          content:
+            text/plain:
+              schema:
+                type: String
+                example: Pong
+               
+  
