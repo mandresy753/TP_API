@@ -1,0 +1,240 @@
+openapi: 3.1.0
+info:
+  title: User Management API
+  description: API pour gérer les profils utilisateurs avec sous-schémas
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8000'
+
+paths:
+  /users/{id}:
+    get:
+      summary: Récupère un utilisateur complet
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Utilisateur trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+              examples:
+                exampleUser:
+                  summary: Exemple d'utilisateur
+                  value:
+                    identifier: "user_001"
+                    personalInfo:
+                      first_name: "Alice"
+                      last_name: "Dupont"
+                      birthdate: "1990-05-15"
+                      email: "alice@example.com"
+                    address:
+                      street: "123 rue de Paris"
+                      city: "Antananarivo"
+                      country: "Madagascar"
+                      postal_code: 101
+                    preferences:
+                      needs_newsletter: true
+                      language: fr
+
+  /users:
+    post:
+      summary: Crée une liste d'utilisateurs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUserProfile'
+            examples:
+              newUsers:
+                summary: Liste de nouveaux utilisateurs
+                value:
+                  - personalInfo:
+                      first_name: "Bob"
+                      last_name: "Martin"
+                      birthdate: "1985-09-10"
+                      email: "bob@example.com"
+                    address:
+                      street: "45 rue de Lyon"
+                      city: "Fianarantsoa"
+                      country: "Madagascar"
+                      postal_code: 301
+                    preferences:
+                      needs_newsletter: false
+                      language: mg
+      responses:
+        '201':
+          description: Utilisateurs créés avec identifiants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+
+  /users/{id}/personalInfo:
+    put:
+      summary: Met à jour les informations personnelles
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalInfo'
+      responses:
+        '200':
+          description: Informations personnelles mises à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalInfo'
+
+  /users/{id}/address:
+    put:
+      summary: Met à jour l'adresse
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '200':
+          description: Adresse mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+
+  /users/{id}/preferences:
+    put:
+      summary: Met à jour les préférences
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preferences'
+      responses:
+        '200':
+          description: Préférences mises à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preferences'
+
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      description: Identifiant de l'utilisateur
+      required: true
+      schema:
+        type: string
+        example: "user_001"
+
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        identifier:
+          type: string
+          example: "user_001"
+        personalInfo:
+          $ref: '#/components/schemas/PersonalInfo'
+        address:
+          $ref: '#/components/schemas/Address'
+        preferences:
+          $ref: '#/components/schemas/Preferences'
+      required:
+        - identifier
+        - personalInfo
+        - address
+        - preferences
+
+    CreateUserProfile:
+      type: object
+      properties:
+        personalInfo:
+          $ref: '#/components/schemas/PersonalInfo'
+        address:
+          $ref: '#/components/schemas/Address'
+        preferences:
+          $ref: '#/components/schemas/Preferences'
+      required:
+        - personalInfo
+        - address
+        - preferences
+
+    PersonalInfo:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: "Alice"
+        last_name:
+          type: string
+          example: "Dupont"
+        birthdate:
+          type: string
+          format: date
+          example: "1990-05-15"
+        email:
+          type: string
+          format: email
+          example: "alice@example.com"
+      required:
+        - first_name
+        - last_name
+        - birthdate
+        - email
+
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+          example: "123 rue de Paris"
+        city:
+          type: string
+          example: "Antananarivo"
+        country:
+          type: string
+          example: "Madagascar"
+        postal_code:
+          type: integer
+          example: 101
+      required:
+        - street
+        - city
+        - country
+        - postal_code
+
+    Preferences:
+      type: object
+      properties:
+        needs_newsletter:
+          type: boolean
+          example: true
+        language:
+          type: string
+          enum:
+            - mg
+            - fr
+            - eng
+          example: fr
+      required:
+        - needs_newsletter
+
+        - language
