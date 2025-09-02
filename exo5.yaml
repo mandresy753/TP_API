@@ -1,0 +1,125 @@
+openapi: 3.1.0
+info:
+  title: Order
+  description: Order
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8000'
+
+paths:
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: Liste paginée des commandes.
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: liste des commandes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+              examples:
+                multiple:
+                  summary: Plusieurs commandes
+                  value:
+                    - identifier: 101
+                      customer_name: Alice
+                      creation_datetime: 2025-09-01T10:30:00Z
+                      total_amount: 49.99
+                    - identifier: 102
+                      customer_name: Bob
+                      creation_datetime: 2025-09-02T15:45:00Z
+                      total_amount: 29.50
+                empty:
+                  summary: Aucune commande
+                  value: [ ]
+
+    post:
+      tags:
+        - Orders
+      summary: Créer une commande (protégé par Basic Authentication)
+      security:
+        - basicAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            examples:
+              newOrder:
+                summary: Exemple de création de commande
+                value:
+                  identifier: 103
+                  customer_name: Charlie
+                  creation_datetime: 2025-09-02T20:00:00Z
+                  total_amount: 75.00
+      responses:
+        '201':
+          description: Commande créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              examples:
+                created:
+                  summary: Réponse après création
+                  value:
+                    identifier: 103
+                    customer_name: Charlie
+                    creation_datetime: 2025-09-02T20:00:00Z
+                    total_amount: 75.00
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        identifier:
+          type: integer
+          example: 101
+        customer_name:
+          type: string
+          example: Alice
+        creation_datetime:
+          type: string
+          format: date-time
+          example: 2025-09-01T10:30:00Z
+        total_amount:
+          type: number
+          format: float
+          example: 49.99
+      required:
+        - identifier
+        - customer_name
+        - creation_datetime
+        - total_amount
+
+  parameters:
+    page:
+      name: page
+      in: query
+      description: Numéro de page pour la pagination
+      required: false
+      schema:
+        type: integer
+        example: 1
+    size:
+      name: size
+      in: query
+      description: Taille de page (nombre d’éléments par page)
+      required: false
+      schema:
+        type: integer
+        example: 20
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
