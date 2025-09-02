@@ -1,20 +1,23 @@
 openapi: 3.1.0
 info:
-  title: Title
-  description: Title
+  title: Product API
+  description: API pour gérer les produits
   version: 1.0.0
 servers:
   - url: 'http://localhost:8000'
+
 paths:
   /products:
     get:
+      tags:
+        - Products
       summary: Recherche de produits
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/q'
       responses:
         '200':
-          description: liste des produits correspondant a la recherche
+          description: Liste des produits correspondant à la recherche
           content:
             application/json:
               schema:
@@ -25,21 +28,21 @@ paths:
                 multiple:
                   summary: Résultat avec plusieurs produits
                   value:
-                  - name: chocolat
-                    expiration_datetime: 2025-12-31T23:59:59Z
-                    price: 3.99
-                  - name: Lait
-                    expiration_datetime: 2025-10-15T12:00:00Z
-                    price: 1.49
+                    - name: chocolat
+                      expiration_datetime: 2025-12-31T23:59:59Z
+                      price: 3.99
+                    - name: lait
+                      expiration_datetime: 2025-10-15T12:00:00Z
+                      price: 1.49
                 empty:
                   summary: Résultat vide
-                  value: [ ]
+                  value: []
 
 components:
   schemas:
     Product:
       type: object
-      parameters:
+      properties:
         name:
           type: string
           example: chocolat
@@ -48,8 +51,9 @@ components:
           format: date-time
           example: 2025-12-31T23:59:59Z
         price:
-          type: float
-          example: 3,99
+          type: number
+          format: float
+          example: 3.99
       required:
         - name
         - expiration_datetime
@@ -67,10 +71,8 @@ components:
     q:
       name: q
       in: query
-      description: terme de recherche
+      description: Terme de recherche
       required: false
       schema:
-        type: integer
-        example: 10
-
-
+        type: string
+        example: chocolat
